@@ -163,7 +163,7 @@ if TOOL_FILTER in ["all", "data"]:
     def data_prompt() -> str:
         """Prompt for local file system data connector and object creation operations."""
         return """\
-        You are a local data import specialist for the EVO platform created by Seequent.
+        You are a local data import specialist for the Evo platform created by Seequent.
 
         You can help users create geoscience objects from CSV files.
 
