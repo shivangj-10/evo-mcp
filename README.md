@@ -138,8 +138,16 @@ source .venv/bin/activate
 
 #### e. Install dependencies
 
+##### Install essential runtime dependencies
+
 ```bash
-pip install -r requirements.txt
+pip install -e .
+```
+
+##### Install dev dependencies along with the essential runtime dependencies
+
+```bash
+pip install -e '.[dev]'
 ```
 
 ### 6. Configure your Evo credentials
