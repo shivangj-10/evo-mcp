@@ -43,13 +43,14 @@ def register_admin_tools(mcp):
 
     @mcp.tool()
     async def get_workspace_summary(workspace_id: str) -> dict:
-        """Get summary statistics for a workspace (object counts by type).
+        """Get summary statistics for a workspace (object counts by type and file counts).
         
         Args:
             workspace_id: Workspace UUID
         """
         await ensure_initialized()
         object_client = await evo_context.get_object_client(UUID(workspace_id))
+        file_client = await evo_context.get_file_client(UUID(workspace_id))
         
         # Get all objects
         all_objects = await object_client.list_all_objects()
@@ -60,10 +61,25 @@ def register_admin_tools(mcp):
             schema = obj.schema_id.sub_classification
             schema_counts[schema] = schema_counts.get(schema, 0) + 1
         
+        # Get all files
+        all_files = await file_client.list_all_files()
+        
+        # Build file list with details
+        files_list = [
+            {
+                "id": str(file.id),
+                "name": file.name,
+                "path": file.path
+            }
+            for file in all_files
+        ]
+        
         return {
             "workspace_id": str(workspace_id),
             "total_objects": len(all_objects),
             "objects_by_schema": schema_counts,
+            "total_files": len(all_files),
+            "files": files_list,
         }
 
     @mcp.tool()
