@@ -43,7 +43,7 @@ def register_admin_tools(mcp):
 
     @mcp.tool()
     async def get_workspace_summary(workspace_id: str) -> dict:
-        """Get summary statistics for a workspace (object counts by type and file counts).
+        """Get summary statistics for a workspace (object counts by type and file counts by extension).
         
         Args:
             workspace_id: Workspace UUID
@@ -64,6 +64,17 @@ def register_admin_tools(mcp):
         # Get all files
         all_files = await file_client.list_all_files()
         
+        # Count files by extension
+        extension_counts = {}
+        for file in all_files:
+            # Extract extension from filename
+            name = file.name
+            if '.' in name:
+                ext = name.rsplit('.', 1)[-1].lower()
+            else:
+                ext = "(no extension)"
+            extension_counts[ext] = extension_counts.get(ext, 0) + 1
+        
         # Build file list with details
         files_list = [
             {
@@ -79,6 +90,7 @@ def register_admin_tools(mcp):
             "total_objects": len(all_objects),
             "objects_by_schema": schema_counts,
             "total_files": len(all_files),
+            "files_by_extension": extension_counts,
             "files": files_list,
         }
 

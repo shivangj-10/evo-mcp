@@ -192,3 +192,45 @@ def register_file_tools(mcp):
                 "file_path": file_path,
                 "status": "download_failed"
             }
+
+    @mcp.tool()
+    async def list_files(
+        workspace_id: str,
+        path_filter: str = ""
+    ) -> dict:
+        """List all files in a workspace.
+        
+        Args:
+            workspace_id: Workspace UUID
+            path_filter: Optional path prefix to filter files (e.g., "/data" to list files in /data folder)
+            
+        Returns:
+            List of files with id, name, and path
+        """
+        await ensure_initialized()
+        
+        file_client = await evo_context.get_file_client(UUID(workspace_id))
+        
+        all_files = await file_client.list_all_files()
+        
+        # Apply path filter if provided
+        if path_filter:
+            if not path_filter.startswith("/"):
+                path_filter = f"/{path_filter}"
+            all_files = [f for f in all_files if f.path.startswith(path_filter)]
+        
+        files_list = [
+            {
+                "id": str(file.id),
+                "name": file.name,
+                "path": file.path
+            }
+            for file in all_files
+        ]
+        
+        return {
+            "workspace_id": workspace_id,
+            "total_files": len(files_list),
+            "path_filter": path_filter if path_filter else None,
+            "files": files_list
+        }
