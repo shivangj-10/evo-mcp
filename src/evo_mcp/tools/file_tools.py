@@ -5,6 +5,7 @@ These tools enable uploading, downloading, and managing files in Evo workspaces:
 - upload_file: Upload local files to a workspace
 - download_file: Download workspace files to the configured local data directory
 - list_file_versions: List all versions of a file in a workspace
+- list_files: List all files in a workspace
 
 Configuration:
 - Set EVO_LOCAL_DATA_DIR environment variable for download destination
@@ -138,22 +139,14 @@ def register_file_tools(mcp):
         """
         await ensure_initialized()
         
-        # Check if local data directory is configured
-        if not os.getenv("EVO_LOCAL_DATA_DIR", ""):
-            return {
-                "error": "Local data directory is not configured",
-                "status": "not_configured",
-                "hint": "Set EVO_LOCAL_DATA_DIR environment variable"
-            }
-        
-        # Get local data directory
+        # Get local data directory (falls back to directory's data folder if EVO_LOCAL_DATA_DIR not set)
         data_dir = _get_data_directory()
         
         if not data_dir.exists():
             return {
                 "error": f"Local data directory does not exist: {data_dir}",
                 "status": "directory_missing",
-                "hint": "Set EVO_LOCAL_DATA_DIR environment variable to a valid path"
+                "hint": "Create the directory or set EVO_LOCAL_DATA_DIR environment variable to a valid path"
             }
         
         # Ensure file_path starts with /
