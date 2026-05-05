@@ -37,7 +37,8 @@ from evo_mcp.tools import (
     register_filesystem_tools,
     register_object_builder_tools,
     register_file_tools,
-    register_instance_users_admin_tools
+    register_instance_users_admin_tools,
+    register_blockmodel_tools,
 )
 
 # Get transport mode from environment variable
@@ -102,6 +103,7 @@ if TOOL_FILTER in ["all", "data"]: #  "data_agent"
     register_filesystem_tools(mcp)
     register_object_builder_tools(mcp)
     register_file_tools(mcp)
+    register_blockmodel_tools(mcp)
     if TOOL_FILTER == "data":
         print("Evo MCP Server configured for Data Agent")
     else:
